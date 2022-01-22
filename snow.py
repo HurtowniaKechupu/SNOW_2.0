@@ -37,12 +37,30 @@ def MUL_alpha(w):
 
 
 def MUL_alpha_iverted(w):
-    index = (w and 0xFF)
+    index = (w & 0xFF)
     a = w>>8
     result = a^tabele.snow_alpha_mul_inv[index]
     return result
 
-  
+def S(w):
+    r0,r1,r2,r3 = 0,0,0,0
+    #todo naprawa
+    srw0=SR[(w[:8]).uint]
+    srw1=SR[(w[8:16]).uint]
+    srw2=SR[(w[16:24]).uint]
+    srw3=SR[(w[24:]).uint]
+
+    srw0_new=BitArray(srw0)
+    srw1_new=BitArray(srw1)
+    srw2_new=BitArray(srw2)
+    srw3_new=BitArray(srw3)
+
+    r0=(MULx(srw0_new,cte)^(srw1_new)^(srw2_new)^(MULx(srw3_new,cte)^(srw3_new)))
+    r1=((MULx(srw0_new,cte)^(srw0_new))^MULx(srw1_new,cte)^(srw2_new)^(srw3_new))
+    r2=((srw0_new)^(MULx(srw1_new,cte)^(srw1_new))^MULx(srw2_new,cte)^(srw3_new))
+    r3=((srw0_new)^(srw1_new)^(MULx(srw2_new,cte)^(srw2_new))^MULx(srw3_new,cte))
+
+    return (r0+r1+r2+r3)
 
 def Initialize():
 # todo zrobić
