@@ -2,29 +2,34 @@ from bitstring import BitArray, BitStream
 import snow_arrays
 import clock
 
-# deklaracja 32 bitowego  LFSR:
-LFSR_S0=BitArray('0x00000000')
-LFSR_S1=BitArray('0x00000000')
-LFSR_S2=BitArray('0x00000000')
-LFSR_S3=BitArray('0x00000000')
-LFSR_S4=BitArray('0x00000000')
-LFSR_S5=BitArray('0x00000000')
-LFSR_S6=BitArray('0x00000000')
-LFSR_S7=BitArray('0x00000000')
-LFSR_S8=BitArray('0x00000000')
-LFSR_S9=BitArray('0x00000000')
-LFSR_S10=BitArray('0x00000000')
-LFSR_S11=BitArray('0x00000000')
-LFSR_S12=BitArray('0x00000000')
-LFSR_S13=BitArray('0x00000000')
-LFSR_S14=BitArray('0x00000000')
-LFSR_S15=BitArray('0x00000000')
 
-# deklaracja 32 bitowego FSM:
-FSM_R1=BitArray('0x00000000')
-FSM_R2=BitArray('0x00000000')
 
-s = BitArray('0xFFFFFFFF') # 4,294,967,295
+def Init_variables():
+    # deklaracja 32 bitowego  LFSR:
+    #global LFSR_S0, LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10, LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15, FSM_R1, FSM_R2, s
+    LFSR_S0 = BitArray('0x00000000')
+    LFSR_S1=BitArray('0x00000000')
+    LFSR_S2=BitArray('0x00000000')
+    LFSR_S3=BitArray('0x00000000')
+    LFSR_S4=BitArray('0x00000000')
+    LFSR_S5=BitArray('0x00000000')
+    LFSR_S6=BitArray('0x00000000')
+    LFSR_S7=BitArray('0x00000000')
+    LFSR_S8=BitArray('0x00000000')
+    LFSR_S9=BitArray('0x00000000')
+    LFSR_S10=BitArray('0x00000000')
+    LFSR_S11=BitArray('0x00000000')
+    LFSR_S12=BitArray('0x00000000')
+    LFSR_S13=BitArray('0x00000000')
+    LFSR_S14=BitArray('0x00000000')
+    LFSR_S15=BitArray('0x00000000')
+
+    # deklaracja 32 bitowego FSM:
+    FSM_R1=BitArray('0x00000000')
+    FSM_R2=BitArray('0x00000000')
+    s = BitArray('0xFFFFFFFF') # 4,294,967,295
+
+
 def MUL_alpha(w):
     index = w>>24 # '>>'  	Shift right by pushing copies of the leftmost bit in from the left, and let the rightmost bits fall off
     a = 0
@@ -63,18 +68,18 @@ def Initialize(k,IV):
     LFSR_S12 = k[0] ^ IV[1]
     LFSR_S11 = k[3] ^ 0xffffffff #
     LFSR_S10 = k[2] ^ 0xffffffff ^ IV[2]
-    LFSR_S9 = k[1] ^ BitArray('0xffffffff') ^ IV[3]
-    LFSR_S8 = k[0] ^ BitArray('0xffffffff')
+    LFSR_S9 = k[1] ^ 0xffffffff ^ IV[3]
+    LFSR_S8 = k[0] ^ 0xffffffff
     LFSR_S7 = k[3]
     LFSR_S6 = k[2]
     LFSR_S5 = k[1]
     LFSR_S4 = k[0]
-    LFSR_S3 = k[3] ^ BitArray('0xffffffff')
-    LFSR_S2 = k[2] ^ BitArray('0xffffffff')
+    LFSR_S3 = k[3] ^ 0xffffffff
+    LFSR_S2 = k[2] ^ 0xffffffff
     LFSR_S1 = k[1] ^ 0xffffffff
     LFSR_S0 = k[0] ^ 0xffffffff
-    FSM_R1 = BitArray('0x00000000')
-    FSM_R2 = BitArray('0x00000000')
+    FSM_R1 = 0x00000000
+    FSM_R2 = 0x00000000
     for i in range(32):
         F = clock.ClockFSM()
         clock.Clock_init_LFSR(F)
@@ -88,4 +93,4 @@ def GenerateKeystream(n):
         F = clock.ClockFSM()
         z.append(F^LFSR_S0)
         clock.Clock_work_LFSR()
-	return z
+    return z
