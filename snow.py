@@ -1,4 +1,5 @@
 from bitstring import BitArray, BitStream
+import tabele
 import clock
 
 # deklaracja 32 bitowego  LFSR:
@@ -23,14 +24,25 @@ LFSR_S15=BitArray('0x00000000')
 FSM_R1=BitArray('0x00000000')
 FSM_R2=BitArray('0x00000000')
 
-def MUL_alpha(c):
-#todo zrobić
+s = BitArray('0xFFFFFFFF') # 4,294,967,295
+def MUL_alpha(w):
+    index = w>>24 # '>>'  	Shift right by pushing copies of the leftmost bit in from the left, and let the rightmost bits fall off
+    a = 0
+    for i in range (0,8):
+        a = w<<1
+        if(a>>32 == 1):
+            a^=s+1
+    result = (a^tabele.snow_alpha_mul[index])
+    return result
 
 
-def MUL_alpha_iverted(c):
-#todo zrobić
+def MUL_alpha_iverted(w):
+    index = (w and 0xFF)
+    a = w>>8
+    result = a^tabele.snow_alpha_mul_inv[index]
+    return result
 
-
+  
 
 def Initialize():
-
+# todo zrobić
