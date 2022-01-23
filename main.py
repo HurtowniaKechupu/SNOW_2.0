@@ -1,5 +1,7 @@
 from bitstring import BitArray
 import snow_arrays
+import time
+from Crypto.PublicKey import RSA
 
 
 def Trim_32(x):
@@ -166,6 +168,7 @@ FSM_R1 = BitArray('0x00000000')
 FSM_R2 = BitArray('0x00000000')
 s = BitArray('0xFFFFFFFF') # 4,294,967,295
 
+
 # Działanie dla danych testowych:
 # ______________________________________________________________________________________________________________________
 
@@ -175,19 +178,27 @@ key = [BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), B
 k = [key[3], key[2], key[1], key[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
 IV = [BitArray('0x00000000'), BitArray('0x00000000'), BitArray('0x00000000'), BitArray('0x00000000')]
 iv = [IV[3], IV[2], IV[1], IV[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
+start_time = time.time()
 Initialize(k, iv)
 keystream = GenerateKeystream(5)
+end_time = time.time()
 print(keystream)
+print(f'Czas szyfrowania: {end_time-start_time}')
 
 # C355385D, B31D6CBD, F774AF53, 66C2E877, 4DEADAC7, k=AAAAA, IV=(4,3,2,1)
 key2 = [BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA')]
 k2 = [key2[3], key2[2], key2[1], key2[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
 IV2 = [BitArray('0x00000004'), BitArray('0x00000003'), BitArray('0x00000002'), BitArray('0x00000001')]
 iv2 = [IV2[3], IV2[2], IV2[1], IV2[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
+start_time = time.time()
 Initialize(k2, iv2)
 keystream2 = GenerateKeystream(5)
+end_time = time.time()
 print(keystream2)
+print(f'Czas szyfrowania: {end_time-start_time}')
 
+
+# TODO: dorobić porównanie z innym szyfrem np. RSA
 
 
 
