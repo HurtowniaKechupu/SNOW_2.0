@@ -11,6 +11,7 @@ def Trim_32(x):
     else:
         return x
 
+
 def MULx(v,c):
     if v.bin[0]=='1':
         return ((v<<1)^c)
@@ -26,38 +27,18 @@ def MULxPOW(v,i,c):
 
 
 def MUL_alpha(c):
-    #c = c[:8]
+    c = c[:8]
     x=BitArray('0xa9')
     return ((MULxPOW(c,23,x))+(MULxPOW(c,245,x))+(MULxPOW(c,48,x))+(MULxPOW(c,239,x)))
 
+
 def DIV_alpha(c):
-    #c = c[24:]
+    c = c[24:]
     x=BitArray('0xa9')
     return ((MULxPOW(c,16,x))+(MULxPOW(c,39,x))+(MULxPOW(c,6,x))+(MULxPOW(c,64,x)))
 
-def MUL_alpha2(w):
-    index = w >> 24 # '>>'  	Shift right by pushing copies of the leftmost bit in from the left, and let the rightmost bits fall off
-    index = index.uint
-    a = 0
-    for i in range(8):
-        a = w<<1
-        if(a>>32 == 1):
-            a^=s+1
-    b = Trim_32(BitArray(snow_arrays.snow_alpha_mul[index]))
-    result = (a ^ b)
-    return result
 
-
-def DIV_alpha2(w):
-    index = (Trim_32(w) & '0x000000FF')
-    index = index.uint
-    a = w >> 8
-    b = Trim_32(BitArray(snow_arrays.snow_alpha_mul_inv[index]))
-    result = a ^ b
-    return result
-
-
-def S(w): #TA METODA JEST DOBRZE NA 99% NIE RUSZAĆ JEJ
+def S(w):
     w = BitArray(w)
     w3 = w[:8].uint
     w2 = w[8:16].uint
@@ -107,7 +88,7 @@ def GenerateKeystream(n):
 def Clock_init_LFSR(F):
     global LFSR_S0,LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10, LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15
     #v = F ^ MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ DIV_alpha(LFSR_S11)
-    v = ((LFSR_S0 << 8) ^ MUL_alpha(BitArray(LFSR_S0[:8])) ^ (LFSR_S2) ^ (LFSR_S11 >> 8) ^ DIV_alpha(BitArray(LFSR_S11[24:])) ^ F)
+    v = ((LFSR_S0 << 8) ^ MUL_alpha(BitArray(LFSR_S0)) ^ (LFSR_S2) ^ (LFSR_S11 >> 8) ^ DIV_alpha(BitArray(LFSR_S11)) ^ F)
     LFSR_S0=LFSR_S1
     LFSR_S1=LFSR_S2
     LFSR_S2=LFSR_S3
@@ -130,7 +111,7 @@ def Clock_init_LFSR(F):
 def Clock_work_LFSR():
     global LFSR_S0, LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10,LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15
     #v = MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ DIV_alpha(LFSR_S11)
-    v = ((LFSR_S0 << 8) ^ MUL_alpha(BitArray(LFSR_S0[:8])) ^ (LFSR_S2) ^ (LFSR_S11 >> 8) ^ DIV_alpha(BitArray(LFSR_S11[24:])))
+    v = ((LFSR_S0 << 8) ^ MUL_alpha(BitArray(LFSR_S0)) ^ (LFSR_S2) ^ (LFSR_S11 >> 8) ^ DIV_alpha(BitArray(LFSR_S11)))
     LFSR_S0 = LFSR_S1
     LFSR_S1 = LFSR_S2
     LFSR_S2 = LFSR_S3
@@ -150,7 +131,6 @@ def Clock_work_LFSR():
 
 # zegar fsm
 def ClockFSM():
-    #todo trzeba poszukać może tutaj nwm czy hexy dobrze robią
     global FSM_R1, FSM_R2, LFSR_S5, LFSR_S15
     x = LFSR_S15.uint + FSM_R1.uint
     x %= 4294967296 # 4294967296=2**32
@@ -186,8 +166,6 @@ s = BitArray('0xFFFFFFFF') # 4,294,967,295
 
 # ______________________________________________________________________________________________________________________
 
-#todo obecny problem to niezgodność wygenerowanego z testowym
-# drugi zestaw testowy*
 # E00982F5, 25F02054, 214992D8, 706F2B20, DA585E5B dla AAAAA,(0,0,0,0)
 key = [BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA')]
 k = [key[3],key[2],key[1],key[0]] # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
