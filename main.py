@@ -1,4 +1,4 @@
-from bitstring import BitArray, BitStream
+from bitstring import BitArray
 import snow_arrays
 
 
@@ -16,20 +16,20 @@ def MUL_alpha(w):
     index = w >> 24 # '>>'  	Shift right by pushing copies of the leftmost bit in from the left, and let the rightmost bits fall off
     index = index.uint
     a = 0
-    for i in range (0,8):
+    for i in range(8):
         a = w<<1
         if(a>>32 == 1):
             a^=s+1
-    b = Trim_32(BitArray(snow_arrays.snow_alpha_mul[index]))
+    b = BitArray(snow_arrays.snow_alpha_mul[index])
     result = (a ^ b)
     return result
 
 
 def MUL_alpha_iverted(w):
-    index = (w & '0x000000FF')
+    index = (Trim_32(w) & '0x000000FF')
     index = index.uint
     a = w >> 8
-    b = Trim_32(BitArray(snow_arrays.snow_alpha_mul[index]))
+    b = BitArray(snow_arrays.snow_alpha_mul_inv[index])
     result = a ^ b
     return result
 
@@ -37,10 +37,10 @@ def MUL_alpha_iverted(w):
 def S(w):
     # todo warto tu też poszukać
     w = BitArray(w)
-    w0 = w[:8].uint
-    w1 = w[8:16].uint
-    w2 = w[16:24].uint
-    w3 = w[24:].uint
+    w3 = w[:8].uint
+    w2 = w[8:16].uint
+    w1 = w[16:24].uint
+    w0 = w[24:].uint
     r = Trim_32(BitArray(snow_arrays.snow_T0[w0])) ^ Trim_32(BitArray(snow_arrays.snow_T1[w1])) ^ Trim_32(BitArray(snow_arrays.snow_T2[w2])) ^ Trim_32(BitArray(snow_arrays.snow_T3[w3]))
     return r
 
@@ -50,7 +50,7 @@ def Initialize(k,IV):
     LFSR_S14 = k[2]
     LFSR_S13 = k[1]
     LFSR_S12 = k[0] ^ IV[1]
-    LFSR_S11 = k[3] ^ BitArray('0xffffffff') #
+    LFSR_S11 = k[3] ^ BitArray('0xffffffff')
     LFSR_S10 = k[2] ^ BitArray('0xffffffff') ^ IV[2]
     LFSR_S9 = k[1] ^ BitArray('0xffffffff') ^ IV[3]
     LFSR_S8 = k[0] ^ BitArray('0xffffffff')
@@ -83,7 +83,7 @@ def GenerateKeystream(n):
 
 def Clock_init_LFSR(F):
     global LFSR_S0,LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10, LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15
-    v = F ^ MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ MUL_alpha_iverted(LFSR_S11) # todo trzeba poszukać może tutaj
+    v = F ^ MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ MUL_alpha_iverted(LFSR_S11)
     LFSR_S0=LFSR_S1
     LFSR_S1=LFSR_S2
     LFSR_S2=LFSR_S3
@@ -105,7 +105,7 @@ def Clock_init_LFSR(F):
 # zegar działaanie
 def Clock_work_LFSR():
     global LFSR_S0, LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10,LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15
-    v = MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ MUL_alpha_iverted(LFSR_S11) # #todo trzeba poszukać może tutaj
+    v = MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ MUL_alpha_iverted(LFSR_S11)
     LFSR_S0 = LFSR_S1
     LFSR_S1 = LFSR_S2
     LFSR_S2 = LFSR_S3
@@ -165,7 +165,9 @@ s = BitArray('0xFFFFFFFF') # 4,294,967,295
 # drugi zestaw testowy*
 # 8D590AE9, A74A7D05, 6DC9CA74, B72D1A45, 99B0A083
 key = [BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA')]
+k = [key[3],key[2],key[1],key[0]] # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
 IV = [BitArray('0x00000000'),BitArray('0x00000000'),BitArray('0x00000000'),BitArray('0x00000000')]
-Initialize(key,IV)
+iv = [IV[3],IV[2],IV[1],IV[0]]# nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
+Initialize(k,iv)
 keystream = GenerateKeystream(5)
 print(keystream)
