@@ -1,5 +1,3 @@
-from bitstring import BitArray, BitStream
-
 snow_alpha_mul = [
         '0x00000000', '0xE19FCF13', '0x6B973726', '0x8A08F835', '0xD6876E4C', '0x3718A15F', '0xBD10596A', '0x5C8F9679',
         '0x05A7DC98', '0xE438138B', '0x6E30EBBE', '0x8FAF24AD', '0xD320B2D4', '0x32BF7DC7', '0xB8B785F2', '0x59284AE1',

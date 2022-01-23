@@ -72,6 +72,7 @@ def Initialize(k,IV):
         F = ClockFSM()
         Clock_init_LFSR(F)
 
+
 def GenerateKeystream(n):
     #todo tu też sprawdzić
     ClockFSM()
@@ -129,6 +130,7 @@ def Clock_work_LFSR():
     LFSR_S14 = LFSR_S15
     LFSR_S15 = v
 
+
 # zegar fsm
 def ClockFSM():
     global FSM_R1, FSM_R2, LFSR_S5, LFSR_S15
@@ -164,14 +166,29 @@ FSM_R1=BitArray('0x00000000')
 FSM_R2=BitArray('0x00000000')
 s = BitArray('0xFFFFFFFF') # 4,294,967,295
 
+# Działanie dla danych testowych:
 # ______________________________________________________________________________________________________________________
 
+
 # E00982F5, 25F02054, 214992D8, 706F2B20, DA585E5B dla AAAAA,(0,0,0,0)
-key = [BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA'),BitArray('0xAAAAAAAA')]
-k = [key[3],key[2],key[1],key[0]] # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
-IV = [BitArray('0x00000000'),BitArray('0x00000000'),BitArray('0x00000000'),BitArray('0x00000000')]
-iv = [IV[3],IV[2],IV[1],IV[0]]# nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
-Initialize(k,iv)
+key = [BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA')]
+k = [key[3], key[2], key[1], key[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
+IV = [BitArray('0x00000000'), BitArray('0x00000000'), BitArray('0x00000000'), BitArray('0x00000000')]
+iv = [IV[3], IV[2], IV[1], IV[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
+Initialize(k, iv)
 keystream = GenerateKeystream(5)
 print(keystream)
+
+
+key2 = [BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA')]
+k2 = [key2[3], key2[2], key2[1], key2[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
+IV2 = [BitArray('0x00000004'), BitArray('0x00000003'), BitArray('0x00000002'), BitArray('0x00000001')]
+iv2 = [IV2[3], IV2[2], IV2[1], IV2[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
+Initialize(k2, iv2)
+keystream2 = GenerateKeystream(5)
+print(keystream2)
+
+
+
+
 
