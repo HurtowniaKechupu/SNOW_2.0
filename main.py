@@ -4,7 +4,7 @@ import snow_arrays
 
 def Trim_32(x):
     temp = BitArray(length=32)
-    if (len(x) < 32):
+    if len(x) < 32:
         n = 32 - len(x)
         temp[n:] = x
         return temp
@@ -12,30 +12,30 @@ def Trim_32(x):
         return x
 
 
-def MULx(v,c):
-    if v.bin[0]=='1':
-        return ((v<<1)^c)
+def MULx(v, c):
+    if v.bin[0] == '1':
+        return (v << 1) ^ c
     else:
-        return (v<<1)
+        return v << 1
 
 
 def MULxPOW(v,i,c):
-    if i==0:
+    if i == 0:
         return v
     else:
-        return MULx(MULxPOW(v,i-1,c),c)
+        return MULx(MULxPOW(v, i-1, c), c)
 
 
 def MUL_alpha(c):
     c = c[:8]
-    x=BitArray('0xa9')
-    return ((MULxPOW(c,23,x))+(MULxPOW(c,245,x))+(MULxPOW(c,48,x))+(MULxPOW(c,239,x)))
+    x = BitArray('0xa9')
+    return (MULxPOW(c, 23, x))+(MULxPOW(c, 245, x))+(MULxPOW(c, 48, x))+(MULxPOW(c, 239, x))
 
 
 def DIV_alpha(c):
     c = c[24:]
-    x=BitArray('0xa9')
-    return ((MULxPOW(c,16,x))+(MULxPOW(c,39,x))+(MULxPOW(c,6,x))+(MULxPOW(c,64,x)))
+    x = BitArray('0xa9')
+    return (MULxPOW(c, 16, x))+(MULxPOW(c, 39, x))+(MULxPOW(c, 6, x))+(MULxPOW(c, 64, x))
 
 
 def S(w):
@@ -48,7 +48,7 @@ def S(w):
     return r
 
 
-def Initialize(k,IV):
+def Initialize(k, IV):
     global LFSR_S0, LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10, LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15, FSM_R1, FSM_R2
     LFSR_S15 = k[3] ^ IV[0]
     LFSR_S14 = k[2]
@@ -74,7 +74,7 @@ def Initialize(k,IV):
 
 
 def GenerateKeystream(n):
-    #todo tu też sprawdzić
+    # todo tu też sprawdzić
     ClockFSM()
     Clock_work_LFSR()
     z = []
@@ -87,31 +87,31 @@ def GenerateKeystream(n):
 
 
 def Clock_init_LFSR(F):
-    global LFSR_S0,LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10, LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15
-    #v = F ^ MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ DIV_alpha(LFSR_S11)
+    global LFSR_S0, LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10, LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15
+    # v = F ^ MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ DIV_alpha(LFSR_S11)
     v = ((LFSR_S0 << 8) ^ MUL_alpha(BitArray(LFSR_S0)) ^ (LFSR_S2) ^ (LFSR_S11 >> 8) ^ DIV_alpha(BitArray(LFSR_S11)) ^ F)
-    LFSR_S0=LFSR_S1
-    LFSR_S1=LFSR_S2
-    LFSR_S2=LFSR_S3
-    LFSR_S3=LFSR_S4
-    LFSR_S4=LFSR_S5
-    LFSR_S5=LFSR_S6
-    LFSR_S6=LFSR_S7
-    LFSR_S7=LFSR_S8
-    LFSR_S8=LFSR_S9
-    LFSR_S9=LFSR_S10
-    LFSR_S10=LFSR_S11
-    LFSR_S11=LFSR_S12
-    LFSR_S12=LFSR_S13
-    LFSR_S13=LFSR_S14
-    LFSR_S14=LFSR_S15
-    LFSR_S15=v
+    LFSR_S0 = LFSR_S1
+    LFSR_S1 = LFSR_S2
+    LFSR_S2 = LFSR_S3
+    LFSR_S3 = LFSR_S4
+    LFSR_S4 = LFSR_S5
+    LFSR_S5 = LFSR_S6
+    LFSR_S6 = LFSR_S7
+    LFSR_S7 = LFSR_S8
+    LFSR_S8 = LFSR_S9
+    LFSR_S9 = LFSR_S10
+    LFSR_S10 = LFSR_S11
+    LFSR_S11 = LFSR_S12
+    LFSR_S12 = LFSR_S13
+    LFSR_S13 = LFSR_S14
+    LFSR_S14 = LFSR_S15
+    LFSR_S15 = v
 
 
 # zegar działaanie
 def Clock_work_LFSR():
     global LFSR_S0, LFSR_S1, LFSR_S2, LFSR_S3, LFSR_S4, LFSR_S5, LFSR_S6, LFSR_S7, LFSR_S8, LFSR_S9, LFSR_S10,LFSR_S11, LFSR_S12, LFSR_S13, LFSR_S14, LFSR_S15
-    #v = MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ DIV_alpha(LFSR_S11)
+    # v = MUL_alpha(LFSR_S0) ^ LFSR_S2 ^ DIV_alpha(LFSR_S11)
     v = ((LFSR_S0 << 8) ^ MUL_alpha(BitArray(LFSR_S0)) ^ (LFSR_S2) ^ (LFSR_S11 >> 8) ^ DIV_alpha(BitArray(LFSR_S11)))
     LFSR_S0 = LFSR_S1
     LFSR_S1 = LFSR_S2
@@ -145,25 +145,25 @@ def ClockFSM():
 
 
 LFSR_S0 = BitArray('0x00000000')
-LFSR_S1=BitArray('0x00000000')
-LFSR_S2=BitArray('0x00000000')
-LFSR_S3=BitArray('0x00000000')
-LFSR_S4=BitArray('0x00000000')
-LFSR_S5=BitArray('0x00000000')
-LFSR_S6=BitArray('0x00000000')
-LFSR_S7=BitArray('0x00000000')
-LFSR_S8=BitArray('0x00000000')
-LFSR_S9=BitArray('0x00000000')
-LFSR_S10=BitArray('0x00000000')
-LFSR_S11=BitArray('0x00000000')
-LFSR_S12=BitArray('0x00000000')
-LFSR_S13=BitArray('0x00000000')
-LFSR_S14=BitArray('0x00000000')
-LFSR_S15=BitArray('0x00000000')
+LFSR_S1 = BitArray('0x00000000')
+LFSR_S2 = BitArray('0x00000000')
+LFSR_S3 = BitArray('0x00000000')
+LFSR_S4 = BitArray('0x00000000')
+LFSR_S5 = BitArray('0x00000000')
+LFSR_S6 = BitArray('0x00000000')
+LFSR_S7 = BitArray('0x00000000')
+LFSR_S8 = BitArray('0x00000000')
+LFSR_S9 = BitArray('0x00000000')
+LFSR_S10 = BitArray('0x00000000')
+LFSR_S11 = BitArray('0x00000000')
+LFSR_S12 = BitArray('0x00000000')
+LFSR_S13 = BitArray('0x00000000')
+LFSR_S14 = BitArray('0x00000000')
+LFSR_S15 = BitArray('0x00000000')
 
 # deklaracja 32 bitowego FSM:
-FSM_R1=BitArray('0x00000000')
-FSM_R2=BitArray('0x00000000')
+FSM_R1 = BitArray('0x00000000')
+FSM_R2 = BitArray('0x00000000')
 s = BitArray('0xFFFFFFFF') # 4,294,967,295
 
 # Działanie dla danych testowych:
@@ -179,7 +179,7 @@ Initialize(k, iv)
 keystream = GenerateKeystream(5)
 print(keystream)
 
-
+# C355385D, B31D6CBD, F774AF53, 66C2E877, 4DEADAC7, k=AAAAA, IV=(4,3,2,1)
 key2 = [BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA'), BitArray('0xAAAAAAAA')]
 k2 = [key2[3], key2[2], key2[1], key2[0]]  # nie wiem czy trzeba odwrócić kolejność czy nie, sprawdzić później
 IV2 = [BitArray('0x00000004'), BitArray('0x00000003'), BitArray('0x00000002'), BitArray('0x00000001')]
